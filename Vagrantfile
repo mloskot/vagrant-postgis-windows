@@ -14,13 +14,15 @@ $psql = (Join-Path -Path $pgsqlBin -ChildPath 'psql.exe')
 $createdb = (Join-Path -Path $pgsqlBin -ChildPath 'createdb.exe')
 $dropdb = (Join-Path -Path $pgsqlBin -ChildPath 'dropdb.exe')
 echo "Downloading PostgreSQL 9.5"
-(New-Object Net.WebClient).DownloadFile('http://get.enterprisedb.com/postgresql/postgresql-9.5.3-1-windows-x64.exe', 'postgresql-9.5.3-1-windows-x64.exe')
+$pgsqlInstallExe = (Join-Path -Path $env:UserProfile -ChildPath 'postgresql-9.5.3-1-windows-x64.exe')
+(New-Object Net.WebClient).DownloadFile('http://get.enterprisedb.com/postgresql/postgresql-9.5.3-1-windows-x64.exe', $pgsqlInstallExe)
 echo "Downloading PostGIS 2.2"
-(New-Object Net.WebClient).DownloadFile('http://download.osgeo.org/postgis/windows/pg95/postgis-bundle-pg95x64-setup-2.2.2-2.exe', 'postgis-bundle-pg95x64-setup-2.2.2-2.exe')
+$postgisInstallExe = (Join-Path -Path $env:UserProfile -ChildPath 'postgis-bundle-pg95x64-setup-2.2.2-2.exe')
+(New-Object Net.WebClient).DownloadFile('http://download.osgeo.org/postgis/windows/pg95/postgis-bundle-pg95x64-setup-2.2.2-2.exe', $postgisInstallExe)
 echo "Installing PostgreSQL 9.5"
-C:\vagrant\postgresql-9.5.3-1-windows-x64.exe --mode unattended --prefix $pgsqlPrefix --servicename PostgreSQL --superpassword vagrant | Out-Null
+cmd /c start /wait $pgsqlInstallExe --mode unattended --prefix $pgsqlPrefix --servicename PostgreSQL --superpassword vagrant
 echo "Installing PostGIS 2.2"
-C:\vagrant\postgis-bundle-pg95x64-setup-2.2.2-2.exe /S /USERNAME=postgres /PASSWORD=vagrant /PORT=5432 | Out-Null
+cmd /c start /wait $postgisInstallExe /S /USERNAME=postgres /PASSWORD=vagrant /PORT=5432
 # Post-installation
 echo "PostgreSQL: Adding $pgsqlBin to PATH"
 $reg = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
