@@ -52,12 +52,16 @@ SCRIPT
 
 Vagrant.configure(2) do |config|
   config.vm.box = "msabramo/HyperVServer2012"
+  config.vm.guest = :windows
+  config.vm.communicator = "winrm"
+  config.vm.network "private_network", type: "dhcp"
+  config.vm.network "forwarded_port",  host: 6543, guest: 5432, auto_correct: true
+
   config.vm.provider "virtualbox" do |vb|
     vb.gui = true
     vb.memory = "4096"
     vb.cpus = 4
   end
-  config.vm.network "private_network", type: "dhcp"
-  config.vm.network "forwarded_port",  host: 6543, guest: 5432, auto_correct: true
+
   config.vm.provision "shell", inline: $script
 end
